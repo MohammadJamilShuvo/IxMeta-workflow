@@ -135,7 +135,7 @@ IxMeta-workflow/
 ### 1. Clone
 
 ```bash
-git clone https://github.com/<USER>/IxMeta-workflow.git
+git clone https://github.com/MohammadJamilShuvo/IxMeta-workflow.git
 cd IxMeta-workflow
 ```
 
