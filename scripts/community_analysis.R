@@ -1,0 +1,20 @@
+args <- commandArgs(trailingOnly=TRUE)
+if (length(args) != 2) stop("Usage: community_analysis.R <relative_matrix.tsv> <outdir>")
+infile <- args[1]; outdir <- args[2]
+dir.create(outdir, recursive=TRUE, showWarnings=FALSE)
+suppressPackageStartupMessages(library(vegan))
+x <- read.delim(infile, check.names=FALSE, row.names=1)
+x <- as.matrix(x)
+sh <- diversity(x, index="shannon")
+write.table(data.frame(sample=names(sh), shannon=as.numeric(sh)), file.path(outdir,"shannon.tsv"), sep="\t", row.names=FALSE, quote=FALSE)
+bc <- vegdist(x, method="bray")
+write.table(as.matrix(bc), file.path(outdir,"bray_curtis.tsv"), sep="\t", quote=FALSE, col.names=NA)
+if (nrow(x) >= 3) {
+  p <- cmdscale(bc, k=min(2,nrow(x)-1), eig=TRUE)
+  coords <- data.frame(sample=rownames(p$points), PCoA1=p$points[,1], PCoA2=if(ncol(p$points)>1) p$points[,2] else 0)
+  write.table(coords, file.path(outdir,"pcoa.tsv"), sep="\t", row.names=FALSE, quote=FALSE)
+  pdf(file.path(outdir,"pcoa.pdf"), width=7, height=6)
+  plot(coords$PCoA1, coords$PCoA2, pch=19, xlab="PCoA1", ylab="PCoA2")
+  text(coords$PCoA1, coords$PCoA2, labels=coords$sample, pos=3, cex=0.7)
+  dev.off()
+}

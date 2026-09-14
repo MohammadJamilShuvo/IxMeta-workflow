@@ -1,0 +1,50 @@
+import csv
+from pathlib import Path
+
+configfile: "config/config.yaml"
+
+OUT = config.get("output_dir", "results")
+SAMPLES_FILE = config["samples"]
+
+with open(SAMPLES_FILE, encoding="utf-8") as fh:
+    _rows = list(csv.DictReader(fh, delimiter="\t"))
+SAMPLES = [r["sample"] for r in _rows]
+READS = {r["sample"]: (r["r1"], r["r2"]) for r in _rows}
+
+CLASSIFY = bool(config.get("classification", {}).get("enabled", False))
+CANDIDATES_ENABLED = bool(config.get("candidate_analysis", {}).get("enabled", False))
+COMMUNITY = bool(config.get("community_analysis", {}).get("enabled", True)) and CLASSIFY
+
+CANDIDATES = []
+CAND_REFS = {}
+CAND_COMP = {}
+if CANDIDATES_ENABLED:
+    with open(config["candidate_analysis"]["candidates"], encoding="utf-8") as fh:
+        for r in csv.DictReader(fh, delimiter="\t"):
+            cid=r["candidate_id"]
+            CANDIDATES.append(cid)
+            CAND_REFS[cid]=r["reference_fasta"]
+            CAND_COMP[cid]=r.get("comparative_fasta", "")
+
+include: "workflow/rules/qc.smk"
+include: "workflow/rules/host.smk"
+include: "workflow/rules/assembly.smk"
+if CLASSIFY:
+    include: "workflow/rules/classification.smk"
+if CANDIDATES_ENABLED:
+    include: "workflow/rules/candidate.smk"
+
+finals = [f"{OUT}/01_qc/multiqc_report.html", f"{OUT}/02_host_depletion/host_depletion_summary.tsv"]
+finals += expand(f"{OUT}/04_assembly/{{sample}}/final.contigs.fa", sample=SAMPLES)
+if CLASSIFY:
+    finals += expand(f"{OUT}/03_classification/{{sample}}.bracken.tsv", sample=SAMPLES)
+    finals += [f"{OUT}/07_community/bracken_relative.tsv", f"{OUT}/07_community/taxon_prevalence.tsv"]
+if CANDIDATES_ENABLED:
+    finals += expand(f"{OUT}/05_candidates/{{sample}}/{{candidate}}/evidence.tsv", sample=SAMPLES, candidate=CANDIDATES)
+    finals += expand(f"{OUT}/05_candidates/{{sample}}/{{candidate}}/consensus.fa", sample=SAMPLES, candidate=CANDIDATES)
+    PHYLO_CANDIDATES = [c for c in CANDIDATES if CAND_COMP.get(c, "")]
+    if PHYLO_CANDIDATES:
+        finals += expand(f"{OUT}/06_phylogeny/{{sample}}/{{candidate}}/iqtree.treefile", sample=SAMPLES, candidate=PHYLO_CANDIDATES)
+
+rule all:
+    input: finals

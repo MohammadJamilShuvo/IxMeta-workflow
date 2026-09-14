@@ -1,0 +1,3 @@
+candidate_id	reference_fasta	comparative_fasta
+rickettsia_example	/path/to/rickettsia_reference.fa	/path/to/rickettsia_comparative_refs.fa
+borrelia_example	/path/to/borrelia_reference.fa	/path/to/borrelia_comparative_refs.fa

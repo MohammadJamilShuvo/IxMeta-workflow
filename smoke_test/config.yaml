@@ -1,0 +1,44 @@
+project: "ixmeta_smoke"
+samples: "smoke_test/samples.tsv"
+references:
+  host_fasta: "smoke_test/host.fa"
+output_dir: "smoke_test/results"
+threads:
+  fastp: 2
+  fastqc: 1
+  host_mapping: 2
+  kraken2: 2
+  bracken: 1
+  assembly: 2
+  candidate_mapping: 2
+  variant_calling: 1
+  phylogeny: 1
+fastp:
+  min_length: 50
+  qualified_quality_phred: 20
+  unqualified_percent_limit: 40
+host_depletion:
+  bowtie2_preset: "--very-sensitive"
+classification:
+  enabled: false
+  kraken_db: ""
+  confidence: 0.05
+  minimum_hit_groups: 2
+  bracken_level: "S"
+  read_length: 150
+  threshold: 10
+assembly:
+  min_contig_len: 300
+  presets: "meta-sensitive"
+candidate_analysis:
+  enabled: false
+  candidates: ""
+  min_mapq: 20
+  min_baseq: 20
+  min_depth: 3
+  min_variant_qual: 20
+community_analysis:
+  enabled: false
+  minimum_total_reads: 10
+report:
+  capture_versions: true

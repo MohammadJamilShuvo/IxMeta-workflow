@@ -1,0 +1,44 @@
+project: "PRJEB49853_ixodes_portugal"
+samples: "case_study/PRJEB49853/samples.tsv"
+references:
+  host_fasta: "resources/ixodes_ricinus/GCA_964199275.3.fna"
+output_dir: "results"
+threads:
+  fastp: 4
+  fastqc: 2
+  host_mapping: 8
+  kraken2: 8
+  bracken: 2
+  assembly: 12
+  candidate_mapping: 8
+  variant_calling: 4
+  phylogeny: 4
+fastp:
+  min_length: 50
+  qualified_quality_phred: 20
+  unqualified_percent_limit: 40
+host_depletion:
+  bowtie2_preset: "--very-sensitive"
+classification:
+  enabled: false
+  kraken_db: "/path/to/k2_pluspf_database"
+  confidence: 0.05
+  minimum_hit_groups: 2
+  bracken_level: "S"
+  read_length: 150
+  threshold: 10
+assembly:
+  min_contig_len: 500
+  presets: "meta-sensitive"
+candidate_analysis:
+  enabled: false
+  candidates: "config/candidate_references.tsv"
+  min_mapq: 20
+  min_baseq: 20
+  min_depth: 3
+  min_variant_qual: 20
+community_analysis:
+  enabled: true
+  minimum_total_reads: 10
+report:
+  capture_versions: true

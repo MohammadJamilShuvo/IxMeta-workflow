@@ -1,0 +1,2 @@
+sample	r1	r2
+SMOKE	smoke_test/data/SMOKE_R1.fastq.gz	smoke_test/data/SMOKE_R2.fastq.gz

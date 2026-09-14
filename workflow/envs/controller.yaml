@@ -1,0 +1,12 @@
+name: ixmeta
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - snakemake-minimal>=8
+  - snakemake-executor-plugin-slurm
+  - pyyaml
+  - pandas
+  - ncbi-datasets-cli
