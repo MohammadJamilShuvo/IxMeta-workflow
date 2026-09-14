@@ -2,6 +2,8 @@
 
 **Reproducible host-depleted metagenomic profiling and pathogen-genomics workflow for *Ixodes ricinus* sequencing data**
 
+<img width="1254" height="1254" alt="workflow_diagram" src="https://github.com/user-attachments/assets/125f1720-dcea-4a1e-9f35-26dd58ce4e21" />
+
 IxMeta is a Snakemake workflow for analysing shotgun/metagenomic sequencing data generated from whole *Ixodes ricinus* ticks. It separates the vector genome from the non-host fraction, profiles bacterial/viral/eukaryotic microbial signals, assembles non-host reads, and performs reference-based genomic characterization of selected candidate pathogens or symbionts.
 
 The workflow is designed around a practical problem in tick metagenomics: most reads from a whole tick can originate from the vector itself, while biologically important microorganisms may be low abundance, phylogenetically close to non-pathogenic endosymbionts, or incompletely represented in reference databases. IxMeta therefore treats broad taxonomic classification as a discovery layer and requires genome-level evidence for stronger organism-level interpretation.
