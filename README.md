@@ -2,8 +2,6 @@
 
 **Reproducible host-depleted metagenomic profiling and pathogen-genomics workflow for *Ixodes ricinus* sequencing data**
 
-<img width="1254" height="1254" alt="workflow_diagram" src="https://github.com/user-attachments/assets/125f1720-dcea-4a1e-9f35-26dd58ce4e21" />
-
 IxMeta is a Snakemake workflow for analysing shotgun/metagenomic sequencing data generated from whole *Ixodes ricinus* ticks. It separates the vector genome from the non-host fraction, profiles bacterial/viral/eukaryotic microbial signals, assembles non-host reads, and performs reference-based genomic characterization of selected candidate pathogens or symbionts.
 
 The workflow is designed around a practical problem in tick metagenomics: most reads from a whole tick can originate from the vector itself, while biologically important microorganisms may be low abundance, phylogenetically close to non-pathogenic endosymbionts, or incompletely represented in reference databases. IxMeta therefore treats broad taxonomic classification as a discovery layer and requires genome-level evidence for stronger organism-level interpretation.
@@ -44,53 +42,8 @@ The host-depletion reference is the current chromosome-level *I. ricinus* assemb
 
 ## Workflow architecture
 
-```text
-Public or local paired-end FASTQ
-            │
-            ▼
-     01. read preprocessing
-     fastp + FastQC + MultiQC
-            │
-            ▼
-     02. host depletion
-     Bowtie2 → GCA_964199275.3
-            │
-       ┌────┴────────────────────┐
-       │                         │
-       ▼                         ▼
- vector-mapped reads        non-host reads
- retained for QC                 │
- / future vector                 ├──────────────┐
- genomic analysis                │              │
-                                 ▼              ▼
-                         03. classification   04. de novo assembly
-                         Kraken2 + Bracken    MEGAHIT
-                                 │              │
-                                 └──────┬───────┘
-                                        ▼
-                              candidate selection
-                                        │
-                                        ▼
-                         05. candidate genome evidence
-                         Bowtie2 + SAMtools + BCFtools
-                         depth / breadth / variants / consensus
-                                        │
-                                        ▼
-                         06. optional comparative phylogeny
-                         MAFFT + IQ-TREE2
-                                        │
-                                        ▼
-                         07. cross-sample abundance matrix
-                         R / vegan community summaries
-                                        │
-                                        ▼
-                         08. reproducibility + report bundle
-```
+<img width="1254" height="1254" alt="workflow_diagram" src="https://github.com/user-attachments/assets/ff808397-5cc9-4e0f-b5ac-48db5db70ef8" />
 
-The two evidence layers are deliberate:
-
-- **Discovery:** taxonomic classification and non-host assembly identify organisms worth investigating.
-- **Confirmation/characterization:** candidate mapping, breadth/depth, assembly support, variants and phylogenetic placement establish whether the signal is genome-wide and biologically interpretable.
 
 ---
 
